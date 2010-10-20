@@ -6,6 +6,18 @@
 
 using namespace std;
 
+struct Card
+{
+	int rang;
+	int suit;
+
+	Card(int i, int j)
+	{
+		rang = j;
+		suit = i;
+	}
+	    
+};
 
 class AIPlayer {
 private:
