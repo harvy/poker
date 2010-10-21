@@ -30,7 +30,6 @@ private:
 	int money;
 
 	vector <Card> cards;
-	//vector <int> cards_suit;
 
 public:
 	
