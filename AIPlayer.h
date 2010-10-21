@@ -29,8 +29,8 @@ private:
 	bool is_shared;	// ��� ������� ����� ��� ���
 	int money;
 
-	vector <int> cards_card;
-	vector <int> cards_suit;
+	vector <Card> cards;
+	//vector <int> cards_suit;
 
 public:
 	
@@ -47,23 +47,21 @@ public:
 	}
 
 	// �������� �������
-	void setCards ( vector<int> _cards, vector<int> _suits ) {
+	void setCards ( vector<Card> _cards ) {
 		
 		is_shared = false;
 
-		cards_card = _cards;
-		cards_suit = _suits;
+		cards = _cards;
 	}
 
 	// �������� ���������� �����
-	void addCards ( vector<int> exchanged_cards, vector<int> _suits ) {
+	void addCards ( vector<Card> exchanged_cards ) {
 		
 		is_shared = true;
 
 		for ( int i = 0; i < exchanged_cards.size(); i++ ) {
 
-			cards_card.push_back ( exchanged_cards[i] );
-			cards_suit.push_back ( _suits[i] );
+			cards.push_back ( exchanged_cards[i] );
 		}
 	}
 
@@ -79,7 +77,7 @@ public:
 			/* ������ �� �������� � ����������*/
 		}
 
-		if ( same_suit.size() < 3 && cards_suit.size() < 3 ) {
+		if ( same_suit.size() < 3 && cards_sequence.size() < 3 ) {
 			
 			if ( rand() + risk > 0.8 ) {	// �������-������ ��� �����
 				
@@ -88,7 +86,7 @@ public:
 				return 5;
 			}
 
-			if ( cards_card[3] >= 10 ) {	// ��� ��������� ����� ������ ���� ����� ������
+			if ( cards[3].rang >= 10 ) {	// ��� ��������� ����� ������ ���� ����� ������
 				
 				int arr[] = { 0,1,2 };
 				deleteCards ( arr, 3 );
@@ -124,8 +122,8 @@ public:
 
 			if ( same_suit.size() == cards_sequence.size() ) {
 				
-				// ������� ��������� � �������� 1-13 ( � ���� ������ ����� ������ )
-				if ( cards_card[cards_sequence[0]] > 2 && cards_card[cards_sequence[cards_sequence.size() - 1]] < 12 ) {
+				// ������� ��������� � �������� 2-14 ( � ���� ������ ����� ������ )
+				if ( cards[cards_sequence[0]].rang > 3 && cards[cards_sequence[cards_sequence.size() - 1]].rang < 13 ) {
 
 					int tmp = 5 - cards_sequence.size();
 					deleteCards ( getOther ( cards_sequence ), tmp );
@@ -153,16 +151,16 @@ public:
 		vector<int> info; 
 		vector<int> tmp_info;
 
-		for ( int i = 0; i < cards_card.size(); i++ ) {
+		for ( int i = 0; i < cards.size(); i++ ) {
 
-			suit = cards_suit[i];
+			suit = cards[i].suit;
 			tmp_info.push_back ( i );
 
-			for ( int j = 0; j < cards_card.size(); j++ ) {
+			for ( int j = 0; j < cards.size(); j++ ) {
 
 				if ( i != j ) {
 					
-					if ( cards_suit[j] == suit ) {
+					if ( cards[j].suit == suit ) {
 						
 						tmp_info.push_back ( j );
 					}
@@ -192,9 +190,9 @@ public:
 
 		tmp.push_back ( 0 );
 
-		for ( int i = 1; i < cards_card.size(); i ++ ) {
+		for ( int i = 1; i < cards.size(); i ++ ) {
 			
-			if ( cards_card[i] != cards_card[i - 1] + 1 ) {
+			if ( cards[i].rang != cards[i - 1].rang + 1 ) {
 				
 				if ( tmp.size() > best.size() ) {
 					best = tmp;
@@ -216,7 +214,7 @@ public:
 	// ���������� �� ������ �����
 	void cardSort() {
 
-		int last_index = cards_card.size();
+		int last_index = cards.size();
 
 		while ( last_index > 1 ) {
 
@@ -224,7 +222,7 @@ public:
 				
 				if ( i + 1 < last_index ) {
 
-					if ( cards_card[i] > cards_card[i + 1] ) {
+					if ( cards[i].rang > cards[i + 1].rang ) {
 						swapCards ( i, i + 1 );
 					}
 				}
@@ -239,7 +237,7 @@ public:
 		int* result = new int[5 - mass.size()];
 		int index = 0;
 
-		for ( int i = 0; i < cards_card.size(); i++ ) {
+		for ( int i = 0; i < cards.size(); i++ ) {
 
 			for ( int j = 0; j < mass.size(); i++ ) {
 				
@@ -259,33 +257,28 @@ public:
 	// �������� �������
 	void swapCards ( int ind_1, int ind_2 ) {
 		
-		int tmp_card = cards_card[ind_1];
-		int tmp_suit = cards_suit[ind_1];
+		Card* tmp = new Card ( cards[ind_1].rang, cards[ind_1].suit );
 
-		cards_card[ind_1] = cards_card[ind_2];
-		cards_suit[ind_1] = cards_suit[ind_2];
+		cards[ind_1] = cards[ind_2];
 
-		cards_card[ind_2] = tmp_card;
-		cards_suit[ind_2] = tmp_suit;
+		cards[ind_2].rang = tmp->rang;
+		cards[ind_2].suit = tmp->suit;
 	}
 
 	// ������� ����� �� �������
 	void deleteCard ( int index ) {
 
-		vector<int> tmp_cards;
-		vector<int> tmp_suits;
+		vector<Card> tmp_cards;
 
-		for ( int i = 0; i < cards_card.size(); i++ ) {
+		for ( int i = 0; i < cards.size(); i++ ) {
 			
 			if ( i != index ) {
 				
-				tmp_cards.push_back ( cards_card[i] );
-				tmp_suits.push_back ( cards_suit[i] );
+				tmp_cards.push_back ( cards[i] );
 			}
 		}
 
-		cards_card = tmp_cards;
-		cards_suit = tmp_suits;
+		cards = tmp_cards;
 	}
 
 	// ������� �����
